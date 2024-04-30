@@ -1,5 +1,9 @@
 description: |-
   Crawl SMB shares for juicy information
+
+  Default loot directory ~/.manspider/loot
+  Default logs directory ~/.manspider/logs
+
 author: Kraus17th
 tags:
   - smb
@@ -7,7 +11,7 @@ tags:
   - creds
 
 arguments:
-  f:
+  i:
     default:
       -
     multiple: true
@@ -31,6 +35,18 @@ arguments:
       -
     replacer: __PASSWORD__
     description: password of AD_USER
+
+  T:
+    default:
+      - 5
+    replacer: __TREADS__
+    description: concurrent threads
+
+  dir:
+    default:
+      - ~/.manspider/
+    replacer: __LOOT_DIR__
+    description: loot directory
 
   M:
     default:
