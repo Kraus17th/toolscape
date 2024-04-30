@@ -1,0 +1,99 @@
+description: |-
+  Crawl SMB shares for juicy information
+author: Kraus17th
+tags:
+  - smb
+  - nxc
+  - creds
+
+arguments:
+  f:
+    default:
+      -
+    multiple: true
+    replacer: __TARGET__
+    description: IP, loot, CIDR, file with ip, etc.
+
+  d:
+    default:
+      -
+    replacer: __DOMAIN__
+    description: domain of AD User
+
+  u:
+    default:
+      -
+    replacer: __USERNAME__
+    description: username of AD User
+
+  p:
+    default:
+      -
+    replacer: __PASSWORD__
+    description: password of AD User
+
+  T:
+    default:
+      - 5
+    replacer: __TREADS__
+    description: concurrent threads
+
+  dir:
+    default:
+      - ~/.manspider/
+    replacer: __LOOT_DIR__
+    description: loot directory
+
+  M:
+    default:
+      - 10
+    replacer: __MAXDEPTH__
+    description: maximum depth to spider
+
+  S:
+    default:
+      - 10M
+    replacer: __SIZE__
+    description: don't retrieve files over this size, e.g. "500K" or ".5M"
+
+shell: bash
+
+item_1:
+  description: scripts (ps1, sh, bash, bat, cmd, py)
+  script: >-
+    manspider __TARGET__ -t __TREADS__ -e ps1 sh bash bat cmd py -d __DOMAIN__ -u __USERNAME__ -p '__PASSWORD__' -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
+
+item_2:
+  description: keys/certs (pem, key, rsa, pub, crt, cer, der, pfx, p12)
+  script: >-
+    manspider __TARGET__ -t __TREADS__ -e pem key rsa pub crt cer der pfx p12 -d __DOMAIN__ -u __USERNAME__ -p '__PASSWORD__' -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
+
+item_3:
+  description: configs (cfg, conf, config, reg, ini, properties, yaml, yml, env, xml, json)
+  script: >-
+    manspider __TARGET__ -t __TREADS__ -e cfg conf config reg ini properties yaml yml env xml json -d __DOMAIN__ -u __USERNAME__ -p '__PASSWORD__' -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
+
+item_4:
+  description: sources (c, cpp, java, cs, php, rb, swift, go, sql)
+  script: >-
+    manspider __TARGET__ -t __TREADS__ -e c cpp java cs php rb swift go sql -d __DOMAIN__ -u __USERNAME__ -p '__PASSWORD__' -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
+
+item_5:
+  description: names (admin, user, login, cred, passw, pass, secret, private, key server, vpn)
+  script: >-
+    manspider __TARGET__ -t __TREADS__ -e txt -f admin user login cred passw pass secret private key server vpn -d __DOMAIN__ -u __USERNAME__ -p '__PASSWORD__' -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
+
+item_6:
+  description: names with-ru (админ, польз, логин, парол, секрет, ключ, сервер, admin, user,  login, cred, passw, pass, secret, private, key, server, vpn)
+  script: >-
+    manspider __TARGET__ -t __TREADS__ -e txt -f админ польз логин парол секрет ключ сервер admin user login cred passw pass secret private key server vpn -d __DOMAIN__ -u __USERNAME__ -p '__PASSWORD__' -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
+
+item_7:
+  description: creds (admin, user, login, cred, passw, pass, secret, private, key server, vpn).
+  script:
+    manspider loot -t __TREADS__ -c admin user login cred passw pass secret private key server vpn -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
+
+item_8:
+  description: creds with-ru (админ, польз, логин, парол, секрет, ключ, сервер, admin, user,  login, cred, passw, pass, secret, private, key, server, vpn).
+  script:
+    manspider loot -t __TREADS__ -c админ польз логин парол секрет ключ сервер admin user login cred passw pass secret private key server vpn -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
