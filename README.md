@@ -1,6 +1,6 @@
 # toolscape
 
-Library of [bashmator](https://github.com/vinzekatze/bashmator) for __Kali Linux__.
+[Bashmator](https://github.com/vinzekatze/bashmator) Library for __Kali Linux__.
 
 Fork of [ktz-autokali](https://github.com/vinzekatze/ktz-autokali)
 
@@ -9,7 +9,7 @@ Fork of [ktz-autokali](https://github.com/vinzekatze/ktz-autokali)
 Скачать и добавить библиотеку:
 
 ```
-git clone https://github.com/vinzekatze/ktz-autokali
+git clone https://github.com/Kraus17th/toolscape
 bshm library add toolscape
 bshm library use toolscape
 ```
