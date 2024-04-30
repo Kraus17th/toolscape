@@ -1,0 +1,67 @@
+description: |-
+  Резолвит доменные имена, получает информацию о подсетях, собирает все в 'csv'.
+author: vinzekatze
+tags:
+  - domains
+  - table
+  - final
+  - dig
+  - recon
+  - whois
+install:
+  Не требуется
+arguments:
+  domains-file:
+    default:
+    replacer: __DOMAINS.TXT___
+    description: |-
+      путь до файлов с доменными именами. Пример: 'doms.txt doms2.txt'
+  i:
+    default: IDONTHAVETHISFILE
+    replacer: __IPS.TXT___
+    description: >-
+      путь до файлов с ip адресами, если есть. Пример: 'ips.txt ips2.txt'
+  oH:
+    default: ./_fintable-hosts.csv
+    replacer: __FINTABLE-HOSTS__
+    description: >-
+      путь до выходного файла c хостами. По умолчанию: './_fintable-hosts.csv'
+  oI:
+    default: ./_fintable-noip.txt
+    replacer: __FINTABLE-NO-IP__
+    description: >-
+      путь до выходного файла c доменными именами без ip адреса. По умолчанию: './_fintable-noip.txt'
+
+shell: bash
+script: |-
+  touch __FINTABLE-NO-IP__ || exit
+  touch __FINTABLE-HOSTS__ || exit
+  for j in $(cat __DOMAINS.TXT___); do 
+    for i in $(dig +short A $j AAAA $j 2>/dev/null); do
+      whois -c $i | grep -i -e "inetnum: " -e "inet6num: " -e "netrange: " -e "netname: " | cut -d ' ' -f2- | tr -d ' ' | tr '\n' ' ' | awk -v x=$i -v z=$j '{print x";"z";"$1";"$2}'
+    done
+  done | tee -a "__FINTABLE-HOSTS__"
+  sort -u "__FINTABLE-HOSTS__" > "__FINTABLE-HOSTS__.tmp.txt"
+  cat "__FINTABLE-HOSTS__.tmp.txt" > "__FINTABLE-HOSTS__"
+  rm "__FINTABLE-HOSTS__.tmp.txt"
+  echo '-----------------------'
+  for j in $(cat __DOMAINS.TXT___); do 
+    if [ -z "$(dig +short A $j AAAA $j 2>/dev/null)" ]; then 
+      echo $j
+    fi
+  done | tee -a "__FINTABLE-NO-IP__"
+  sort -u "__FINTABLE-NO-IP__" > "__FINTABLE-NO-IP__.tmp.txt"
+  cat "__FINTABLE-NO-IP__.tmp.txt" > "__FINTABLE-NO-IP__"
+  rm "__FINTABLE-NO-IP__.tmp.txt"
+  echo '-----------------------'
+  if [[ '__IPS.TXT___' != 'IDONTHAVETHISFILE' ]]
+    then
+      for j in $(cat __DOMAINS.TXT___); do
+        if [ -z "$(grep -e $j';' "__FINTABLE-HOSTS__")" ]
+          then whois $j | grep -i -e "inetnum: " -e "inet6num: " -e "netrange: " -e "netname: " | cut -d ' ' -f2- | tr -d ' ' | tr '\n' ' ' | awk -v x=$j '{print x";" ";"$1";"$2}'
+        fi
+      done | tee -a "__FINTABLE-HOSTS__"
+    sort -u "__FINTABLE-HOSTS__" > "__FINTABLE-HOSTS__.tmp.txt"
+    cat "__FINTABLE-HOSTS__.tmp.txt" > "__FINTABLE-HOSTS__"
+    rm "__FINTABLE-HOSTS__.tmp.txt"
+  fi

@@ -1,0 +1,9 @@
+marketplace install recon/domains-hosts/brute_hosts
+marketplace install recon/domains-hosts/certificate_transparency
+marketplace install recon/domains-hosts/hackertarget
+marketplace install recon/domains-domains/brute_suffix
+marketplace install recon/hosts-hosts/resolve
+marketplace install recon/hosts-hosts/reverse_resolve
+marketplace install recon/domains-hosts/mx_spf_ip
+marketplace install reporting/list
+exit

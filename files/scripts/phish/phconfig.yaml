@@ -1,0 +1,38 @@
+# Конфигурация для рассылки
+# Компания: XXX
+#
+# !!! ВАЖНО указывать пути до файлов относительно директории,
+# !!! в которой находится YAML-файл
+#
+# ++++++++++++++++++++++++++++
+# Настройка содержимого письма
+# ++++++++++++++++++++++++++++
+# body_text_path и body_html_path обязательны.
+# attachments_paths может содержать несколько файлов, может быть пустым
+body_text_path: email_data/phish.txt
+body_html_path: email_data/phish.html
+attachments_paths: 
+  - malware_attachments/budget.xls
+
+# ++++++++++
+# Реплейсеры
+# ++++++++++
+# Email получателя кодируется в строку HEX и подставляется
+# вместо реплейсера в body_html и body_txt
+recipient_id_replacer: __VICTIM_ID__
+
+# +++++++++++++++++++
+# Данные для отправки
+# +++++++++++++++++++
+subject: Бюджет проектов 2025
+sender_name: Tihonov, Aleksandr
+sender_email: atihonov@fakecompany.ru
+sender_password: StrOngPassWoRd
+smtp_server: mail.hosting.reg.ru:587
+
+# +++++++++++++++
+# Общие настройки
+# +++++++++++++++
+send_delay: 5
+log_file_path: sendlog.txt
+

@@ -1,0 +1,54 @@
+description: |-
+  Этап 2 тестирования isakmp
+  Брут groupid 
+
+  Возможен только если на предыдущих этапах были получены доступные трансформации
+
+  Статьи:
+  https://book.hacktricks.xyz/network-services-pentesting/ipsec-ike-vpn-pentesting
+  https://xakep.ru/2015/05/13/ipsec-security-flaws/
+author: hacktricks
+tags:
+  - isakmp
+  - IKE
+  - IPsec
+  - 500
+  - 4500
+  - udp
+  - ike-scan
+  - ikeforce
+install: |-
+  docker pull elrey741/ikeforce
+
+arguments:
+  target:
+    multiple: true
+    description: >-
+      Хосты для тестирования с указанными трансформациями (только Aggressive mode!) (пример: 10.0.1.1:4,3,3,1 10.0.1.3:1,2,3,1)
+
+mode:
+  format:
+    target: '{!r}'
+  loop: target
+
+file_1:
+  description: Словарь groupid
+  path: wordlists/ike/groupid.txt
+
+shell: bash
+
+item_1:
+  description: Брут имен групп с помощью ikeforce (заодно подсветит, верна трансформация, или нет)
+  script: >-
+    echo "+ Testing "#target#; docker container run -v $(dirname $(realpath #file_1#)):'/temp' --read-only --rm -ti --name ikeforce elrey741/ikeforce $(echo #target# | cut -f1 -d:) -e -w /temp/$(basename $(realpath #file_1#)) -t $(echo #target# | cut -f2 -d: | tr ',' ' ')
+item_2:
+  description: Брут с помощью ike-scan
+  script: |-
+    echo "+ Testing "#target#;
+    test=$(sudo ike-scan -M -A -n groupnamedoesnotexist --trans=$(echo #target# | cut -f2 -d:) $(echo #target# | cut -f1 -d:) | grep -B14 "1 returned handshake"; )
+    if [ -n "$test" ]; then
+      echo '- Brute Forcing ID with ike-scan is impossible'
+    else
+      while read line; do (echo "Found ID: $line" && sudo ike-scan -M -A -n $line --trans=$(echo #target# | cut -f2 -d:) $(echo #target# | cut -f1 -d:)) | grep -B14 "1 returned handshake" | grep "Found ID:"; done < #file_1#
+    fi
+    

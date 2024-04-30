@@ -1,0 +1,68 @@
+description: >-
+  Определяет сетевые диапазоны, к которым относятся IP адреса.
+author: vinzekatze
+tags:
+  - ip
+  - whois
+  - cidr
+  - nets
+
+install: |-
+  pip install --upgrade ipwhois
+  pip install --upgrade dnspython
+
+shell: bash
+
+arguments:
+  i:
+    default:
+      -
+    metavar: IP
+    multiple: true
+    description: IP адреса для запроса
+    regex: ([a-z0-9]{0,4}\:([a-z0-9]{0,4}\:)*\:[a-z0-9]{0,4})|(([0-9]{1,3}\.)+[0-9]{1,3})
+  d:
+    default:
+      -
+    metavar: DOMAIN
+    multiple: True
+    description: Доменные имена для запроса (разрезолвит сам)
+    regex: '[\w\.\_\-\:\/\,]+'
+
+  dfile:
+    default:
+      -
+    metavar: FILE
+    multiple: True
+    description: Читать домены из файлов
+  ifile:
+    default:
+      -
+    metavar: FILE
+    multiple: true
+    description: Читать IP из файлов
+  o:
+    default:
+      -
+    metavar: PATH
+    description: Записать в файл
+
+file_1:
+  path: scripts/whois.py
+  description: 'Исполняемый скрипт'
+
+mode:
+  format:
+    d: '{!r}'
+    i: '{!r}'
+    dfile: '{!r}'
+    ifile: '{!r}'
+    o: '--output {!r}'
+  pformat:
+    d: '--domains {} '
+    i: '--ips {} '
+    dfile: '--domains-files {} '
+    ifile: '--ips-files {} '
+
+script: >-
+  python3 '#file_1#' #d##i##dfile##ifile##o#

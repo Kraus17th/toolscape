@@ -1,0 +1,38 @@
+description: |-
+  Однострочники для получения начальной информации со скомрометированного Windows хоста. Используй "use -c".
+author: vinzekatze
+tags:
+  - active directory
+  - ad
+  - spn
+  - scan
+  - recon
+
+arguments:
+  f:
+    default:
+      -
+    replacer: __FILE_PATH__
+    description: >- 
+      Сохранить результаты в файл (Win путь брать в кавычки, пример: -f 'C:\Users\"mr who"\Desktop\log.txt')
+
+mode:
+  format:
+    f: >-
+      >> {0}
+
+shell: powershell
+item_1:
+  description: SPN сканирование
+  script: >-
+    function SPN-scan {$search = New-Object DirectoryServices.DirectorySearcher([ADSI]"");
+    $search.filter = "(|(servicePrincipalName=*)(dNSHostName=*))";
+    $results = $search.Findall();
+    foreach($result in $results){
+    $userEntry = $result.GetDirectoryEntry();
+    Write-Output $userEntry.name;
+    Write-Output $(" ! DNSName:  " + $userEntry.dNSHostName);
+    Write-Output $(" ! System:   " + $userEntry.operatingSystem + " " + $userEntry.operatingSystemVersion  + " " + $userEntry.operatingSystemServicePack);
+    Write-Output $(" ! Critical: " + $userEntry.isCriticalSystemObject);
+    foreach($SPN in $userEntry.servicePrincipalName){Write-Output $(" + " + $SPN)}; Write-Output ""}};
+    SPN-scan __FILE_PATH__

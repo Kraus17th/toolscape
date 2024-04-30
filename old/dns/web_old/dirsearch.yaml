@@ -1,0 +1,84 @@
+description: |-
+  Пока что бесполезная глупость. Надо выдумать какую-то комбинацию с пауками
+
+install: |-
+  sudo apt install dirsearch
+
+arguments:
+  f:
+    default:
+      - --url
+      - --url-list
+    description: читать список URL целей из файлов 
+  
+  target:
+    description: URL целей для сканирования
+    multiple: true
+  
+  t:
+    metavar: NUM
+    default: 10
+    description: количество потоков
+    regex: \d+
+  
+  m:
+    metavar: METHOD
+    default: GET
+    description: HTTP метод
+  
+  c:
+    metavar: COOKIE
+    default:
+      -
+    description: куки
+
+  user-agent:
+    metavar: USERAGENT
+    default: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'
+
+  auth:
+    metavar: CRED
+    default:
+      -
+    description: креды (user:password или bearer токен)
+
+  auth-type:
+    default:
+      - none
+      - basic
+      - digest
+      - bearer
+      - ntlm
+    description: тип аутентификации
+  
+  proxy:
+    metavar: URL
+    default:
+      -
+    description: >-
+      прокси (HTTP или SOCKS; пример: localhost:8080, socks5://localhost:8088)
+  
+  
+
+mode:
+  loop: target
+  format:
+    target: '{!r}'
+    m: '{!r}'
+    c: ' --cookie={!r}'
+    user-agent: '{!r}'
+    auth: ' --auth={!r}'
+    auth-type: ' --auth-type={}'
+    proxy: ' --proxy={!r}'
+  replace:
+    auth-type:
+      none:
+
+shell: bash
+
+file_1:
+  description: словарь для IIS
+  path: wordlists/web/iis/iis_dirs.txt
+
+script: >-
+  dirsearch --full-url --deep-recursive #f#=#target# --threads=#t# --user-agent=#user-agent# --http-method=#m##c##auth-type##auth##proxy# -w #file_1#

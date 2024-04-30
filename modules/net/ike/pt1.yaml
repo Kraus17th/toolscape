@@ -1,0 +1,42 @@
+description: |-
+  Этап 1 тестирования isakmp
+  Определение версии и перечисление трансформаций isakmp
+
+  Статьи:
+  https://book.hacktricks.xyz/network-services-pentesting/ipsec-ike-vpn-pentesting
+  https://xakep.ru/2015/05/13/ipsec-security-flaws/
+author: hacktricks
+tags:
+  - isakmp
+  - IKE
+  - IPsec
+  - 500
+  - 4500
+  - udp
+
+install: sudo apt install nmap patator
+  
+arguments:
+  target:
+    multiple: true
+    description: >-
+      IP-адреса целей
+shell: bash
+mode:
+  format:
+    target: '{!r}'
+
+item_1:
+  description: Сканирование скриптом Nmap 'ike-version' (-p500,4500)
+  script: >-
+    sudo nmap -Pn -sU -p500,4500 -sV --open --script=ike-version #target#
+
+item_2:
+  mode:
+    loop: target
+  description: Перечисление трансформаций
+  script: >-
+    echo "+ Testing "#target#; patator ike_enum host=#target# transform=MOD0 0=TRANS aggressive=RANGE1 1=int:0-1 -x ignore:fgrep='NO-PROPOSAL'
+
+
+

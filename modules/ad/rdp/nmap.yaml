@@ -1,0 +1,57 @@
+description: |-
+  Поиск rdp хостов с помощью nmap
+author: vinzekatze
+tags:
+  - rdp
+  - 3389
+  - search
+
+arguments:
+  f:
+    default:
+      - __TARGS__
+      - $(cat __TARGS__)
+    replacer: __TARGS_FORMATED__
+    description: читать цели из файлов
+
+  target:
+    multiple: true
+    replacer: __TARGS__
+    description: цели для сканирования nmap
+
+  o:
+    default: ./rdp-hosts.txt
+    replacer: __LIST__
+    description: файл, куда будет записан список хостов c rdp (дополняет)
+
+  sT:
+    default:
+      - -sS
+      - -sT
+    replacer: __NMAP_MODE__
+    description: использовать TCP сканирование для nmap вместо SYN
+
+  T:
+    default:
+      - 3
+      - 2
+      - 1
+      - 0
+      - 4
+      - 5
+    replacer: __NMAP_T__
+    description: интенсивность сканирования nmap
+
+mode:
+  format:
+    target: '{!r}'
+    o: '{!r}'
+    T: '-T{}'
+
+shell: bash
+
+script: >-
+  sudo nmap __NMAP_T__ --open -Pn __NMAP_MODE__ -p 3389 -oX ./_nmap_rdp_search.xml __TARGS_FORMATED__;
+  xmllint ./_nmap_rdp_search.xml --xpath "/nmaprun/host[ports/port[@portid='3389']/state/@state='open']/address/@addr" 2>/dev/null | sed -e 's/ addr="\(.*\)"/\1/' | sort -u > __LIST__;
+  sort __LIST__ -u -t. -k1,1n -k2,2n -k3,3n -k4,4n -o __LIST__;
+  rm ./_nmap_rdp_search.xml

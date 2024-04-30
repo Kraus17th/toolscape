@@ -1,0 +1,100 @@
+description: |-
+  Парсит xml файлы nmap, ищет заданные с помощью флага '-s' сервисы и порты и выводит доступные сокеты.
+
+  Примеры:
+    - показать все веб-сервисы:
+        xnmap -f nmap.xml -s http https 80 443
+
+    - показать все открытые порты:
+        xnmap -f nmap.xml -i 
+author: vinzekatze
+tags:
+  - nmap
+  - xml
+  - parser
+  - search
+  - services
+arguments:
+  s:
+    metavar: STR
+    default: 'nothing'
+    multiple: true
+    description: номера портов и названия сервисов для поиска
+  i:
+    default:
+      -
+      - '--else'
+    description: инвертировать поиск для '-s'
+  p:
+    default:
+      - 'A'
+      - 'I'
+      - 'P'
+      - 'N'
+    description: |-
+      настройка вывода: 'A' - полный сокет, 'I' - ip адреса, 'P' - номера портов, 'N' - названия сервисов
+  d:
+    metavar: DELIM
+    default:
+      -
+    description: задать разделитель для вывода
+  f:
+    metavar: FILE
+    multiple: true
+    description: nmap xml файл/файлы
+  addr:
+    metavar: IP
+    multiple: true
+    default:
+      - all
+    description: указать ip адреса для поиска
+  hard:
+    default:
+      - 'contains(address/@addr, '
+      - '(address/@addr='
+    description: использовать жесткий поиск для '--addr'
+  proto:
+    default:
+      - all
+      - tcp
+      - udp
+    description: протокол
+  more:
+    default:
+      - >-
+        --if "state/@state='open'"
+      - >-
+        --if "state/@state='open' or state/@state='open|filtered'"
+    description: учитывать также 'open|filtered' порты
+  
+mode:
+  replace:
+    p:
+      A: >-
+        -v "../../address/@addr" -o ":" -v "@portid" -o "/" -v "@protocol" -o " " -v "service/@name" --nl #f# | sort -V | uniq
+      I: >-
+        -v "../../address/@addr" --nl #f# | sort -V | uniq
+      P: >-
+        -v "@portid" --nl #f# | sort -n | uniq
+      N: >-
+        -v "service/@name" --nl #f# | sort | uniq
+    proto:
+      all:
+    addr:
+      all:
+        - '.'
+        - ':'
+  format:
+    d: >-
+        | paste -sd {!r}
+    f: '{!r}'
+    s: '@portid={0!r} or service/@name={0!r}'
+    addr: '#hard#{!r})'
+    proto: '--if "@protocol={!r}"'
+  join:
+    s: ' or '
+    addr: ' or'
+
+shell: bash
+script: >-
+  xmlstarlet sel -t -m "/nmaprun/host[#addr#]/ports/port" #more# #proto# --if "#s#" #i# #p# #d#

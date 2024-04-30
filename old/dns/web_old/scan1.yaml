@@ -1,0 +1,72 @@
+description: >-
+  Сбор информации о сайтах
+author: vinzekatze
+tags:
+  - web
+  - site
+  - http
+  - https
+  - info
+  - 80
+  - 443
+  - whatweb
+  - dirsearch
+  - nuclei
+  - sslscan
+  - wafw00f
+install: |-
+  sudo apt install whatweb
+  sudo apt install dirsearch
+  sudo apt install nuclei
+  sudo apt install wafw00f
+arguments:
+  targets:
+    default:
+    replacer: __TARGS__
+    description: >-
+      Цели для тестирования. Пример: 'https://example.com:8080 http://example2.com'
+    multiple: true
+  t:
+    default: 10
+    replacer: __THREADS__
+    description: Количество потоков (по умолчанию 10)
+  log:
+    default:
+      - 'n'
+      - 'y'
+    replacer: __LOGORNOT__
+    description: Сохранить результаты работы в текущую директорию или нет
+shell: bash
+
+item_1:
+  description: Запуск wafw00f
+  script: |-
+    if [[ '__LOGORNOT__' == 'y' ]]; then
+      for targ in __TARGS__; do prefld=${targ//:\/\//_}; fld=${prefld//[^[:alnum:]]/_}; mkdir -p $(pwd)/$fld; wafw00f $targ | tee $(pwd)/$fld/wafw00f.txt; done
+    else
+      for targ in __TARGS__; do wafw00f $targ; done
+    fi
+item_2:
+  description: Запуск whatweb
+  script: |-
+    if [[ '__LOGORNOT__' == 'y' ]]; then
+      for targ in __TARGS__; do prefld=${targ//:\/\//_}; fld=${prefld//[^[:alnum:]]/_}; mkdir -p $(pwd)/$fld; whatweb -t __THREADS__ -a 3 -v --log-verbose=$(pwd)/$fld/whatweb.txt $targ; done
+    else
+      for targ in __TARGS__; do whatweb -t __THREADS__ -a 3 -v $targ; done
+    fi
+item_3:
+  description: Запуск dirsearch
+  script: |-
+    if [[ '__LOGORNOT__' == 'y' ]]; then
+      for targ in __TARGS__; do prefld=${targ//:\/\//_}; fld=${prefld//[^[:alnum:]]/_}; mkdir -p $(pwd)/$fld; dirsearch -t __THREADS__ -F -u $targ --random-agent -r -R 3 -o $(pwd)/$fld/dirsearch.txt; done
+    else
+      for targ in __TARGS__; do dirsearch -t __THREADS__ -F -u $targ --random-agent -r -R 3; done
+    fi
+item_4:
+  description: Запуск nuclei
+  script: |-
+    if [[ '__LOGORNOT__' == 'y' ]]; then
+      for targ in __TARGS__; do prefld=${targ//:\/\//_}; fld=${prefld//[^[:alnum:]]/_}; mkdir -p $(pwd)/$fld; nuclei -u $targ -c __THREADS__ -headc __THREADS__ -o $(pwd)/$fld/nuclei.txt; done
+    else
+      for targ in __TARGS__; do nuclei -u $targ -c __THREADS__ -headc __THREADS__; done
+    fi

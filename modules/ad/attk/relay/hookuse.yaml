@@ -1,0 +1,70 @@
+description:
+  Заливает и удаляет скопом на все шары файлы 
+author: vinzekatze
+tags:
+  - shares
+  - smb
+  - .url  
+
+install:
+  sudo apt install smbclient
+
+
+
+arguments:  
+  shares:
+    multiple: true
+    description: файлы со списком общих папок, доступных на запись
+
+  u:
+    default:
+      -
+    metavar: USER
+    description: пользователь
+
+  d:
+    default:
+      -
+    metavar: DOMAIN
+    description: домен 
+  
+  p:
+    default:
+      -
+    metavar: PASSWORD
+    description: пароль
+  hook:
+    description: ярлык
+
+mode:
+  format:
+    u: >-
+      #d#{}#p#
+    d: >-
+      {}/
+    p: >-
+      %{}
+    hook: >-
+      "{}"
+  readfile: 
+    - shares
+  loop: shares
+  pformat:
+    u: '-U {!r}'
+
+shell: bash
+
+item_1:
+  description: PUT
+  script: >-
+    echo -En '[#shares#]: ';
+    smbclient '#shares#' #u# -c 'put #hook#'
+
+item_2:
+  description: DELETE
+  script: >-
+    echo -En '[#shares#]: ';
+    smbclient '#shares#' #u# -c 'rm #hook#'
+    && echo "'#hook#' has been removed."
+
+

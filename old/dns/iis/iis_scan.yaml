@@ -1,0 +1,47 @@
+description: >-
+  Тесты для Micrsoft IIS
+author: vinzekatze
+tags:
+  - iis
+  - web
+  - https
+  - metasploit
+  - microsoft
+install: |-
+  sudo apt install dirsearch
+arguments:
+  targets:
+    default:
+    replacer: __TARGS__
+    description: >-
+      Цели для тестирования. Пример: 'https://example.com:8080 http://example2.com'
+  t:
+    default: 1
+    replacer: __THREADS__
+    description: Количество потоков
+shell: bash
+
+file_1:
+  description: словарь для брута директорий IIS сервера
+  path: wordlists/web/iis/iis_dirs.txt
+  replacer: __IIS_DIRS__
+
+
+
+item_1:
+  description: Ищет страницы с аутентификацией и пытается её обойти
+  script: >-
+    msfconsole -q -x "use auxiliary/scanner/http/dir_webdav_unicode_bypass; set THREADS __THREADS__; set RHOSTS __TARGS__; run; quit"
+item_2:
+  description: Пытается определить внутренний IP адрес сервера
+  script: >-
+    msfconsole -q -x "use auxiliary/scanner/http/iis_internal_ip; set THREADS __THREADS__; set RHOSTS __TARGS__; run; quit"
+item_3:
+  description: Пытается определить внутренний IP адрес сервера (2)
+  script: >-
+    msfconsole -q -x "use auxiliary/scanner/http/owa_iis_internal_ip; set THREADS __THREADS__; set RHOSTS __TARGS__; run; quit"
+item_4:
+  description: Пытается раскрыть короткие имена файлов
+  script: >-
+    msfconsole -q -x "use auxiliary/scanner/http/iis_shortname_scanner; set THREADS __THREADS__; set RHOSTS __TARGS__; run; quit"
+    

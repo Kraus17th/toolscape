@@ -1,0 +1,37 @@
+description: |-
+  Полезные команды для netexec (бывший crackmapexec)
+author: vinzekatze
+
+tags:
+  - crackmapexec
+  - mssql
+  - netexec
+
+arguments:
+  targets_list:
+    metavar: FILE
+    multiple: true
+  o:
+    default: ./nxc-mssql-log.txt
+  u:
+    default:
+      -
+  p:
+    default:
+      -
+
+mode:
+  format:
+    targets_list: '{!r}'
+    u: '-u {!r}'
+    p: '-p {!r}'
+    o: '--log {!r}'
+
+shell: bash
+
+item_1:
+  description: basic
+  script: >-
+    nxc -t 50 mssql #targets_list# #u# #p# #o#
+
+

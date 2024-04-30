@@ -1,0 +1,61 @@
+description: |-
+  Скрипт для сборки и рассылки фишингововых писем. Порядок действий такой:
+    
+    1. Получить eml-файл с примером подписи тестироуемой компании
+    2. Извлечь содержимое из eml с помощью скрипта 'phish/extract'
+    3. Отредактировать html-файл письма в консоле разработчика браузера:
+        - в ссылки на свои ресурсы можно подставить строку-реплейсер  для
+          идентификатора получателя (email в HEX)
+        - src изображений в html нужно переписать на локальные относительные
+          пути так, чтобы они начали отображаться в браузере
+    4. Не забыть отредактировать txt-версию ('html2text' может подсобить)
+    5. Создать конфиг для рассылки
+    6. Настроить php-логгер на хостинге для получения данных
+
+  Конфиг для рассылки и логгер можно получить в модуле 'phish/phfiles'
+
+  Email-ы принимает как простым списком, так и с именем для подстановки в адрес получателя после двоеточия. Пример:
+    iivanov@company.ru
+    nnicolaev@company.ru:Nicolay Nicolaev
+  
+author: vinzekatze, dinimus
+tags:
+  - phishing
+  - sendemail
+install: |-
+  sudo apt install sendemail
+
+arguments:
+  config:
+    description: путь до yaml конфига рассылки
+    metavar: FILE
+  emails:
+    description: путь до списка email-адресов получателей рассылки
+    metavar: FILE
+  outdir:
+    default:
+      -
+    metavar: DIR
+    description: сохранить сгенерированные при рассылке eml-файлы в указанную директорию
+  send:
+    default:
+      -
+      - '--send'
+    description: запуск рассылки
+
+file_1:
+  description: скрипт сендера
+  path: scripts/phish/phsender.py
+
+mode:
+  format:
+    config: '{!r}'
+    emails: '{!r}'
+    outdir: '--outdir {!r}'
+
+shell: bash
+script: >-
+  python3 '#file_1#' #config# #emails# #outdir# #send#
+
+
+

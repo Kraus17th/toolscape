@@ -1,0 +1,37 @@
+description: |-
+  Полезные команды для netexec (бывший crackmapexec)
+author: vinzekatze
+
+tags:
+  - crackmapexec
+  - cme
+  - netexec
+
+arguments:
+  targets_list:
+    metavar: FILE
+    multiple: true
+  o:
+    default: ./cme-log.txt
+  u:
+    default:
+      -
+  p:
+    default:
+      -
+
+mode:
+  format:
+    targets_list: '{!r}'
+    u: '-u {!r}'
+    p: '-p {!r}'
+    o: '--log {!r}'
+
+shell: bash
+
+item_1:
+  description: shares
+  script: >-
+    nxc smb #targets_list# --shares #u# #p# #o#
+
+

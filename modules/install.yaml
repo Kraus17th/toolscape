@@ -1,0 +1,99 @@
+description: |-
+  Скрипт установки всего, что требуется для функционирования библиотеки
+
+shell: bash
+
+file_1:
+  path: install/apt_installs.txt
+  replacer: >-
+    #apt_installs#
+  description: список установок из apt
+
+file_2:
+  path: install/docker_images.txt
+  replacer: >-
+    #docker_installs#
+  description: список docker-образов
+
+file_3:
+  path: install/python_installs.txt
+  replacer: >-
+    #python_installs#
+  description: список python-пакетов (pip)
+
+file_4:
+  path: install/python_pipx_installs.txt
+  replacer: >-
+    #python_pipx_installs#
+  description: список python-пакетов (pipx)
+
+file_5:
+  path: install/recon-ng_cmd.txt
+  replacer: >-
+    #recon-ng_installs#
+  description: команды для установки модулей recon-ng
+
+
+
+item_1: 
+  description: apt update -y
+  script: >-
+    sudo apt update -y &&
+    echo -e "\e[1;92m+++ APT REPOSITORIES UPDATED\e[0m" ||
+    echo -e "\e[1;91m+++ APT REPOSITORIES NOT UPDATED\e[0m"
+
+item_2:
+  description: установка docker
+  script: >-
+    if sudo su - $USER -c 'docker run hello-world';
+    then echo -e "\e[1;94m+++ DOCKER ALREADY INSTALLED\e[0m";
+    else
+    sudo apt install -y docker.io && (sudo systemctl enable docker --now && (docker --version && sudo usermod -aG docker $USER));
+    sudo su - $USER -c 'docker run hello-world' && 
+    echo -e "\e[1;92m+++ DOCKER SUCCESSFULLY INSTALLED\e[0m" ||
+    echo -e "\e[1;91m+++ DOCKER INSTALLATION ERROR\e[0m";
+    fi
+
+item_3:
+  description: загрузка docker-образов
+  script: >-
+    if sudo su - $USER -c 'docker run hello-world'; then
+    for image in $(cat "#docker_installs#");
+    do sudo su - $USER -c "docker pull $image" &&
+    echo -e "\e[1;92m+++ [DOCKER] SUCCESSFULLY INSTALLED: $image\e[0m" ||
+    echo -e "\e[1;91m+++ [DOCKER] INSTALLATION ERROR: $image\e[0m";
+    done;
+    else echo -e "\e[1;91m+++ DOCKER NOT INSTALLED\e[0m"; fi
+
+item_4:
+  description: установка тулзов с помощью apt
+  script: >-
+    for tool in $(cat "#apt_installs#");
+    do sudo apt install -y $tool &&
+    echo -e "\e[1;92m+++ [APT] SUCCESSFULLY INSTALLED: $tool\e[0m" ||
+    echo -e "\e[1;91m+++ [APT] INSTALLATION ERROR: $tool\e[0m";
+    done; sudo apt autoremove -y
+
+item_5:
+  description: установка python-пакетов (PIP)
+  script: >-
+    for py_pack in $(cat "#python_installs#"); do
+    pip install --upgrade --break-system-packages $py_pack &&
+    echo -e "\e[1;92m+++ [PIP] SUCCESSFULLY INSTALLED: $py_pack\e[0m" ||
+    echo -e "\e[1;91m+++ [PIP] INSTALLATION ERROR: $py_pack\e[0m";
+    done
+
+item_6:
+  description: установка python-пакетов (PIPX)
+  script: >-
+    pipx ensurepath;
+    for py_pack in $(cat "#python_pipx_installs#"); do
+    pipx install $py_pack &&
+    echo -e "\e[1;92m+++ [PIPX] SUCCESSFULLY INSTALLED: $py_pack\e[0m" ||
+    echo -e "\e[1;91m+++ [PIPX] INSTALLATION ERROR: $py_pack\e[0m";
+    done
+
+item_7:
+  description: скриптовые установки
+  script: >-
+    recon-ng -r #recon-ng_installs#
