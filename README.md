@@ -1,8 +1,6 @@
 # toolscape
 
-[Bashmator](https://github.com/vinzekatze/bashmator) Library for __Kali Linux__.
-
-Fork of [ktz-autokali](https://github.com/vinzekatze/ktz-autokali)
+[Bashmator](https://github.com/vinzekatze/bashmator) Library for __Kali Linux__. Fork of [ktz-autokali](https://github.com/vinzekatze/ktz-autokali).
 
 ## Установка
 
