@@ -1,11 +1,10 @@
 description: |-
   Загружает сайты в текущую директорию и ищет чувствительную информацию.
 
-  Сохраняет результаты в файлы OUT_* в текущей директории.
+  Сохраняет результаты в файлы result_* в текущей директории.
 author: vinzekatze
 tags:
-  - web
-  - download
+  - osint
   - recon
   - metadata
   - https
@@ -57,14 +56,14 @@ item_1:
     while IFS= read line; do exiftool "$line" >> metadata_office_files.txt; done < list_of_office_documents.txt
     while IFS= read line; do exiftool "$line" >> metadata_media_files.txt; done < list_of_media_files.txt
     while IFS= read line; do exiftool "$line" >> metadata_archives.txt; done < list_of_archives.txt
-    cat metadata_* | grep "Last Modified By\|Creator\|Author" | grep -vE "Microsoft|Canon|PScript|Google|Computer|HP Scan|КонсультантПлюс|Xerox|Foxit|Adobe|PDF|Пользователь|Hewlett-Packard|Creator Tool|User|Work|user|work|CorelDRAW|Администратор|Profile Creator|[0-9]{1,2}\.[0-9]{1,2}| $" | awk -F': ' '{print $2}' | grep -E "^.{3,70}$" | sort -u | tee OUT_users_from_metadata.txt
+    cat metadata_* | grep "Last Modified By\|Creator\|Author" | grep -vE "Microsoft|Canon|PScript|Google|Computer|HP Scan|КонсультантПлюс|Xerox|Foxit|Adobe|PDF|Пользователь|Hewlett-Packard|Creator Tool|User|Work|user|work|CorelDRAW|Администратор|Profile Creator|[0-9]{1,2}\.[0-9]{1,2}| $" | awk -F': ' '{print $2}' | grep -E "^.{3,70}$" | sort -u | tee result_users_from_metadata.txt
 
 item_2:
   mode:
     loop:
   description: Поиск email-ов
   script: >-
-    grep -a -r -E -o "\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}\b" ./ | cut -d":" -f2 | grep -v -i -e ".png\|.jpg\|.gif" | sort | uniq | tee OUT_emails.txt
+    grep -a -r -E -o "\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}\b" ./ | cut -d":" -f2 | grep -v -i -e ".png\|.jpg\|.gif" | sort | uniq | tee result_emails.txt
 
 item_3:
   mode:
@@ -73,5 +72,5 @@ item_3:
   script: |-
     grep -a -r -E -o "\b[A-Za-z0-9_-]+\.[A-Za-z]{2,6}\b" ./ | cut -d":" -f2 | grep -E "\.ru$|\.com$|\.net$|\.org$|\.description$|\.pro$" | sort -u | tee domains_temp.txt
     grep -a -r -E -o "\b[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z]{2,6}\b" ./ | cut -d":" -f2 | grep -E "\.ru$|\.com$|\.net$|\.org$|\.description$|\.pro$" | sort -u | tee -a domains_temp.txt
-    sort -u domains_temp.txt > OUT_domains.txt
+    sort -u domains_temp.txt > result_domains.txt
     rm domains_temp.txt
