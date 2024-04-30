@@ -3,7 +3,7 @@ description: |-
 author: Kraus17th
 tags:
   - smb
-  - nxc
+  - spider
   - creds
 
 arguments:
@@ -12,37 +12,25 @@ arguments:
       -
     multiple: true
     replacer: __TARGET__
-    description: IP, loot, CIDR, file with ip, etc.
+    description: IP, IP_LIST, CIDR, loot, etc.
 
   d:
     default:
       -
     replacer: __DOMAIN__
-    description: domain of AD User
+    description: domain of AD_USER
 
   u:
     default:
       -
     replacer: __USERNAME__
-    description: username of AD User
+    description: username of AD_USER
 
   p:
     default:
       -
     replacer: __PASSWORD__
-    description: password of AD User
-
-  T:
-    default:
-      - 5
-    replacer: __TREADS__
-    description: concurrent threads
-
-  dir:
-    default:
-      - ~/.manspider/
-    replacer: __LOOT_DIR__
-    description: loot directory
+    description: password of AD_USER
 
   M:
     default:
