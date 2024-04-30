@@ -1,8 +1,8 @@
 description: |-
-  Загружает сайты в текущую директорию и ищет чувствительную информацию. 
-  
+  Загружает сайты в текущую директорию и ищет чувствительную информацию.
+
   Сохраняет результаты в файлы OUT_* в текущей директории.
-author: kraud, vinzekatze
+author: vinzekatze
 tags:
   - web
   - download
@@ -19,7 +19,7 @@ arguments:
     description: URL сайтов для загрузки
   no-media:
     default:
-      - 
+      -
       - >-
         -*.gif -*.jpg -*.jpeg -*.png -*.tif -*.bmp -*.mov -*.mpg -*.mpeg -*.avi -*.asf -*.mp3 -*.mp2 -*.wav -*.vob -*.qt -*.vid -*.ac3 -*.wma -*.wmv -*.css -*.sass -*.woff
     replacer: __NO-MEDIA__
@@ -42,7 +42,7 @@ mode:
     url: '{!r}'
     user-agent: '{!r}'
   loop: url
-  
+
 script: >-
   targ=__URL__; fld=${targ//:\/\//_}; httrack $targ -O ./${fld//[^[:alnum:]]/_}/ __NO-MEDIA__ --sockets=__TREADS__ --robots=0 --updatehack --user-agent __USER-AGENT__
 
