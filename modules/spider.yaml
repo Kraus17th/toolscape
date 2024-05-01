@@ -10,6 +10,9 @@ tags:
   - spider
   - creds
 
+install:
+  pipx install git+https://github.com/blacklanternsecurity/MANSPIDER
+
 arguments:
   i:
     default:

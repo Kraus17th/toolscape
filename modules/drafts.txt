@@ -1,36 +1,5 @@
-+-------------------------- SMB Spider (manspider) ----------------------------+
++-------------------------- nmap ----------------------------------------------+
 
-# Spidering for scripts (ps1, sh, bash, bat, cmd, py)
-manspider __TARGET__ -t __TREADS__ -e ps1 sh bash bat cmd py -d __DOMAIN__ -u __USERNAME__ -p '__PASSWORD__' -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
 
-# Spidering for keys/certs (pem, key, rsa, pub, crt, cer, der, pfx, p12)
-manspider __TARGET__ -t __TREADS__ -e pem key rsa pub crt cer der pfx p12 -d __DOMAIN__ -u __USERNAME__ -p '__PASSWORD__' -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
-
-# Spidering for configs (cfg, conf, config, reg, ini, properties, yaml, yml, env, xml, json)
-manspider __TARGET__ -t __TREADS__ -e cfg conf config reg ini properties yaml yml env xml json -d __DOMAIN__ -u __USERNAME__ -p '__PASSWORD__' -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
-
-# Spidering for sources (c, cpp, java, cs, php, rb, swift, go, sql)
-manspider __TARGET__ -t __TREADS__ -e c cpp java cs php rb swift go sql -d __DOMAIN__ -u __USERNAME__ -p '__PASSWORD__' -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
-
-# Spidering for txt names (admin, user, login, cred, passw, pass, secret, private, key server, vpn).
-manspider __TARGET__ -t __TREADS__ -e txt -f admin user login cred passw pass secret private key server vpn -d __DOMAIN__ -u __USERNAME__ -p '__PASSWORD__' -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
-
-# Spidering for txt (RU) (админ, польз, логин, парол, секрет, ключ, сервер, admin, user,  login, cred, passw, pass, secret, private, key, server, vpn).
-manspider __TARGET__ -t __TREADS__ -e txt -f админ польз логин парол секрет ключ сервер admin user login cred passw pass secret private key server vpn -d __DOMAIN__ -u __USERNAME__ -p '__PASSWORD__' -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
-
-# Searching for creds in content of spidered files (admin, user, login, cred, passw, pass, secret, private, key server, vpn).
-manspider loot -t __TREADS__ -c admin user login cred passw pass secret private key server vpn -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
-
-# Searching for creds in content of spidered files (with-RU) (админ, польз, логин, парол, секрет, ключ, сервер, admin, user,  login, cred, passw, pass, secret, private, key, server, vpn).
-manspider loot -t __TREADS__ -c админ польз логин парол секрет ключ сервер admin user login cred passw pass secret private key server vpn -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
-
--l LOOT_DIR, --loot-dir LOOT_DIR
-                        loot directory (default ~/.manspider/)
-
--m MAXDEPTH, --maxdepth MAXDEPTH
-                        maximum depth to spider (default: 10)
-
--s SIZE, --max-filesize SIZE
-                        don't retrieve files over this size, e.g. "500K" or ".5M" (default: 10M)
 
 +------------------------------------------------------------------------------+
