@@ -1,5 +1,5 @@
 description: |-
-  Команда для обновления библиотеки (делает 'git pull')
+  Simple script to "git pull" library
 
 shell: bash
 tags:
@@ -8,7 +8,7 @@ tags:
 
 file_1:
   path: '../'
-  description: корневая директория библиотеки
+  description: root of library
 
 script: >-
   olddir=$(realpath .); cd '#file_1#';
