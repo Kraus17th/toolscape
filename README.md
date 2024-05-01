@@ -24,7 +24,7 @@ Install dependencies
 bshm use install --item 1-7
 ```
 
-_**After installation, it is recommended to re-login**_
+***After installation, it is recommended to re-login***
 
 ## Update
 Pull from github repository
