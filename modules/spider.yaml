@@ -96,11 +96,11 @@ item_6:
     manspider __TARGET__ -t __TREADS__ -e txt -f админ польз логин парол секрет ключ сервер admin user login cred passw pass secret private key server vpn -d __DOMAIN__ -u __USERNAME__ -p '__PASSWORD__' -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
 
 item_7:
-  description: creds (admin, user, login, cred, passw, pass, secret, private, key server, vpn).
+  description: creds in loot (admin, user, login, cred, passw, pass, secret, private, key server, vpn).
   script:
     manspider loot -t __TREADS__ -c admin user login cred passw pass secret private key server vpn -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
 
 item_8:
-  description: creds with-ru (админ, польз, логин, парол, секрет, ключ, сервер, admin, user,  login, cred, passw, pass, secret, private, key, server, vpn).
+  description: creds with-ru in loot (админ, польз, логин, парол, секрет, ключ, сервер, admin, user,  login, cred, passw, pass, secret, private, key, server, vpn).
   script:
     manspider loot -t __TREADS__ -c админ польз логин парол секрет ключ сервер admin user login cred passw pass secret private key server vpn -l __LOOT_DIR__ -m __MAXDEPTH__ -s __SIZE__
