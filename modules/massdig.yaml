@@ -12,13 +12,13 @@ arguments:
       -
     multiple: true
     replacer: __FILE__
-    description: random string
+    description: file with targets
 
   o:
     default:
       - result.txt
     replacer: __RESULT__
-    description: random string
+    description: result file
 
 shell: bash
 

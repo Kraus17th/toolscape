@@ -1,3 +1,0 @@
-elrey741/ikeforce
-simplysecurity/simplyemail
-ttervoort/zerologon-tester

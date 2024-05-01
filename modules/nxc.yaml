@@ -1,0 +1,44 @@
+description: >-
+  Simple nxc scripts
+
+author: Kraus17th
+tags:
+  - nxc
+  - smb
+  - tool
+
+install:
+  pipx install git+https://github.com/Pennyw0rth/NetExec
+
+arguments:
+  f:
+    default:
+      - 192.168.1.0/24
+    multiple: true
+    replacer: __TARGET__
+    description: List of IP, CIDR or simple targets
+
+  u:
+    default:
+      -
+    replacer: __USERNAME__
+    description: username of AD_USER
+
+  p:
+    default:
+      -
+    replacer: __PASSWORD__
+    description: password of AD_USER
+
+  log:
+    default:
+      - log.txt
+    replacer: __LOG__
+    description: Log file
+
+shell: bash
+
+item_1:
+  description: Get table of SMB Shares (READ & WRITE) in AD
+  script: >-
+    nxc smb __TARGET__ -u __USERNAME__ -p '__PASSWORD__' --log __LOG__ --shares

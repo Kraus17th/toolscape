@@ -1,2 +1,3 @@
+git+https://github.com/blacklanternsecurity/MANSPIDER
 git+https://github.com/Pennyw0rth/NetExec
 impacket

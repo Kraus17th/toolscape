@@ -1,0 +1,54 @@
+description: |-
+  Simple wpscan script
+
+author: Kraus17th
+tags:
+  - wordpress
+  - wpscan
+  - wp
+
+shell: bash
+
+install:
+  apt install wpscan -y
+
+arguments:
+  u:
+    default:
+      -
+    multiple: true
+    replacer: __TARGET__
+    description: URL to Scan
+
+  m:
+    default:
+      - mixed
+    replacer: __MODE__
+    description: mixed, passive, aggressive
+
+  t:
+    default:
+      - 5
+    replacer: __THREADS__
+    description: Number of concurrent threads
+
+  token:
+    default:
+      - $WPSCAN
+    replacer: __TOKEN__
+    description: Your API Token to wpscan.com
+
+  log:
+    default:
+      - wpscan_log.txt
+    replacer: __LOG__
+    description: Output to file
+
+  color:
+    default:
+      - cli-no-colour
+    replacer: __COLOR__
+    description: cli-no-colour, cli-no-color, json, cli
+
+script: >-
+  wpscan --url __TARGET__ --api-token __TOKEN__ -o __LOG__ --format __COLOR__ --detection-mode __MODE__ -t __THREADS__ --no-banner
