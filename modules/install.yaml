@@ -2,6 +2,9 @@ description: |-
   Скрипт установки всего, что требуется для функционирования библиотеки
 
 shell: bash
+tags:
+  - tools
+  - install
 
 file_1:
   path: install/apt_installs.txt
@@ -35,7 +38,7 @@ file_5:
 
 
 
-item_1: 
+item_1:
   description: apt update -y
   script: >-
     sudo apt update -y &&
@@ -49,7 +52,7 @@ item_2:
     then echo -e "\e[1;94m+++ DOCKER ALREADY INSTALLED\e[0m";
     else
     sudo apt install -y docker.io && (sudo systemctl enable docker --now && (docker --version && sudo usermod -aG docker $USER));
-    sudo su - $USER -c 'docker run hello-world' && 
+    sudo su - $USER -c 'docker run hello-world' &&
     echo -e "\e[1;92m+++ DOCKER SUCCESSFULLY INSTALLED\e[0m" ||
     echo -e "\e[1;91m+++ DOCKER INSTALLATION ERROR\e[0m";
     fi

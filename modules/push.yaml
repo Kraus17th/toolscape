@@ -1,0 +1,21 @@
+description: |-
+  Команда для обновления библиотеки (делает 'git push')
+
+shell: bash
+tags:
+  - github
+  - push
+
+file_1:
+  path: '../'
+  description: корневая директория библиотеки
+
+script: >-
+  olddir=$(realpath .); cd '#file_1#';
+  date=$(date +"%Y-%m-%d %H:%M:%S");
+  git add * &&
+  git commit -m "$date" &&
+  git push &&
+  echo -e "\e[1;92m+++ [GIT] LIBRARY SUCCESSFULLY PUSHED +++\e[0m" ||
+  echo -e "\e[1;91m+++ [GIT] PUSH ERROR +++\e[0m";
+  cd $olddir

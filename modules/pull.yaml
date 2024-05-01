@@ -2,6 +2,9 @@ description: |-
   Команда для обновления библиотеки (делает 'git pull')
 
 shell: bash
+tags:
+  - github
+  - pull
 
 file_1:
   path: '../'
@@ -10,6 +13,6 @@ file_1:
 script: >-
   olddir=$(realpath .); cd '#file_1#';
   git pull &&
-  echo -e "\e[1;92m+++ [GIT] LIBRARY SUCCESSFULLY PULLED\e[0m" ||
-  echo -e "\e[1;91m+++ [GIT] PULL ERROR\e[0m";
+  echo -e "\e[1;92m+++ [GIT] LIBRARY SUCCESSFULLY PULLED +++\e[0m" ||
+  echo -e "\e[1;91m+++ [GIT] PULL ERROR +++\e[0m";
   cd $olddir

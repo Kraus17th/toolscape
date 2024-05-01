@@ -1,0 +1,54 @@
+description: |-
+  This is a system updater script for Bashmator.
+
+author: Kraus17th
+tags:
+  - system
+  - update
+
+shell: bash
+
+item_1:
+  description: update is used to download package information from all configured sources.
+  script: >-
+    echo -e "\e[1;93m+++ CURRENT SOURCES LIST +++\e[0m" &&
+    cat /etc/apt/sources.list &&
+    echo -e "\e[1;93m+++ UPDATING +++\e[0m" &&
+    sudo apt update -y &&
+    echo -e "\e[1;92m+++ PACKAGE INFORMATION UPDATED +++\e[0m" ||
+    echo -e "\e[1;91m+++ PACKAGE INFORMATION NOT UPDATED +++\e[0m"
+
+item_2:
+  description: upgrade is used to install the newest versions of all packages currently installed on the system.
+  script: >-
+    echo -e "\e[1;93m+++ CURRENT SOURCES LIST +++\e[0m" &&
+    cat /etc/apt/sources.list &&
+    echo -e "\e[1;93m+++ UPGRADING +++\e[0m" &&
+    sudo apt-get update &&
+    sudo apt-get upgrade -y &&
+    echo -e "\e[1;92m+++ NEWEST PACKAGES INSTALLED +++\e[0m" ||
+    echo -e "\e[1;91m+++ NEWEST PACKAGES NOT INSTALLED +++\e[0m"
+
+item_3:
+  description: clean is used to remove packages that were automatically installed to satisfy dependencies for other packages and are now no longer needed.
+  script: >-
+    echo -e "\e[1;93m+++ CURRENT SOURCES LIST +++\e[0m" &&
+    cat /etc/apt/sources.list &&
+    echo -e "\e[1;93m+++ CLEANING +++\e[0m" &&
+    sudo apt-get update &&
+    sudo apt autoremove -y &&
+    sudo apt autoclean -y &&
+    sudo apt clean -y &&
+    echo -e "\e[1;92m+++ UNUSED PACKAGES REMOVED +++\e[0m" ||
+    echo -e "\e[1;91m+++ UNUSED PACKAGES NOT REMOVED +++\e[0m"
+
+item_4:
+  description: full-upgrade performs the function of upgrade but will remove currently installed packages if this is needed to upgrade the system as a whole.
+  script: >-
+    echo -e "\e[1;93m+++ CURRENT SOURCES LIST +++\e[0m" &&
+    cat /etc/apt/sources.list &&
+    echo -e "\e[1;93m+++ FULL UPGRADING +++\e[0m" &&
+    sudo apt-get update &&
+    sudo apt full-upgrade -y &&
+    echo -e "\e[1;92m+++ SYSTEM FULL UPGRADED +++\e[0m" ||
+    echo -e "\e[1;91m+++ SYSTEM WILL DIE +++\e[0m"
