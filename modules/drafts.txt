@@ -2,4 +2,10 @@
 
 # Add to massdig -x (IP to Domains)
 
++------------------------bettercap-wifi----------------------------------------+
+
+echo -e "\e[1;97mSTARTING\e[0m" && sudo airmon-ng check kill && sudo airmon-ng start wlan1 && echo -e "\e[1;97mINTERFACES CONFIGURATION \e[0m" && iwconfig && echo -e "\e[1;92m+++ BETTERCAP IS READY +++\e[0m" && sudo bettercap --iface wlan1
+
+echo -e "\e[1;97mSTARTING\e[0m" && sudo airmon-ng stop wlan1 && sudo systemctl restart NetworkManager && echo -e "\e[1;97mINTERFACES CONFIGURATION \e[0m" && iwconfig && echo -e "\e[1;92m+++ INTERFACES RESTORED +++\e[0m"
+
 +------------------------------------------------------------------------------+
