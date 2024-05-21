@@ -1,0 +1,48 @@
+description: >-
+  Couple of Wifi scripts
+
+author: Kraus17th
+tags:
+  - wifi
+  - bettercap
+  - aircrack-ng
+
+install:
+  sudo apt-get install -y bettercap aircrack-ng
+
+arguments:
+  i:
+    default:
+      - wlan1
+    replacer: __IFACE__
+    description: wireless interface
+
+  m:
+    default:
+      - wlan1
+    replacer: __IFACEMON__
+    description: wireless interface in monitor mode
+
+shell: bash
+
+item_1:
+  description: Restore network configuration
+  script: >-
+    echo -e "\e[1;97mSTARTING\e[0m" &&
+    sudo airmon-ng stop __IFACEMON__ &&
+    sudo systemctl restart NetworkManager &&
+    echo -e "\e[1;97mINTERFACES CONFIGURATION \e[0m" &&
+    iwconfig &&
+    echo -e "\e[1;92m+++ INTERFACES RESTORED +++\e[0m"
+
+
+item_2:
+  description: Enable monitor mode on wlan and run bettercap
+  script: >-
+    echo -e "\e[1;97mSTARTING\e[0m" &&
+    sudo airmon-ng check kill &&
+    sudo airmon-ng start __IFACE__ &&
+    echo -e "\e[1;97mINTERFACES CONFIGURATION \e[0m" &&
+    iwconfig &&
+    echo -e "\e[1;92m+++ BETTERCAP IS READY +++\e[0m" &&
+    sudo bettercap --iface __IFACEMON__

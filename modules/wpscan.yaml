@@ -10,7 +10,7 @@ tags:
 shell: bash
 
 install:
-  apt install wpscan -y
+  sudo apt install -y wpscan
 
 arguments:
   u:
