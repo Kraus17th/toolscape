@@ -6,7 +6,6 @@ iptables -t mangle -F
 iptables -t filter -F
 echo "Setting NAT..."
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-iptables -A FORWARD -s 172.16.5.0/24 -o eth0 -j ACCEPT
 iptables -A FORWARD -d 172.16.5.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 echo "Writing rules..."
 iptables -A FORWARD -s 172.16.5.9 -d 127.0.0.0/8 -j ACCEPT
