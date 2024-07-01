@@ -1,15 +1,21 @@
-#/bin/bash
+#!/bin/bash
 echo "Clearing rules..."
 iptables -F
-echo "Writing rules..."
+iptables -t nat -F
+iptables -t mangle -F
+iptables -t filter -F
+echo "Setting NAT..."
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-iptables -t nat -A OUTPUT -d 127.0.0.0/8 -j ACCEPT
-iptables -t nat -A OUTPUT -d 10.0.0.0/8 -j ACCEPT
-iptables -t nat -A OUTPUT -d 172.16.0.0/16 -j ACCEPT
-iptables -t nat -A OUTPUT -d 192.168.0.0/16 -j ACCEPT
-iptables -t nat -A OUTPUT -d 8.8.8.8 -j ACCEPT
-iptables -t nat -A OUTPUT -d 8.8.4.4 -j ACCEPT
-iptables -t nat -A OUTPUT -d 91.218.140.112 -j ACCEPT
-iptables -t nat -A OUTPUT -j DROP
+iptables -A FORWARD -s 172.16.5.0/24 -o eth0 -j ACCEPT
+iptables -A FORWARD -d 172.16.5.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+echo "Writing rules..."
+iptables -A FORWARD -s 172.16.5.9 -d 127.0.0.0/8 -j ACCEPT
+iptables -A FORWARD -s 172.16.5.9 -d 10.0.0.0/8 -j ACCEPT
+iptables -A FORWARD -s 172.16.5.9 -d 172.16.0.0/16 -j ACCEPT
+iptables -A FORWARD -s 172.16.5.9 -d 192.168.0.0/16 -j ACCEPT
+iptables -A FORWARD -s 172.16.5.9 -d 8.8.8.8 -j ACCEPT
+iptables -A FORWARD -s 172.16.5.9 -d 8.8.4.4 -j ACCEPT
+iptables -A FORWARD -s 172.16.5.9 -d 91.218.140.112 -j ACCEPT
+iptables -A FORWARD -s 172.16.5.9 -j DROP
 iptables-save > /etc/iptables/rules.v4
-echo "Saved rules to /etc/iptables/rules.v4"
+echo "RULES saved to /etc/iptables/rules.v4"
