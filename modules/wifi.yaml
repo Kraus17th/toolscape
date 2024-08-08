@@ -25,6 +25,12 @@ arguments:
 
 shell: bash
 
+item_0:
+  description: NetworkManager Restart
+  script: >-
+    sudo service NetworkManager restart
+    echo -e "\e[1;92m+++ NetworkManager Restarted +++\e[0m"
+
 item_1:
   description: Restore network configuration
   script: >-
