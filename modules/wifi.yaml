@@ -25,13 +25,13 @@ arguments:
 
 shell: bash
 
-item_0:
+item_1:
   description: NetworkManager Restart
   script: >-
     sudo service NetworkManager restart
     echo -e "\e[1;92m+++ NetworkManager Restarted +++\e[0m"
 
-item_1:
+item_2:
   description: Restore network configuration
   script: >-
     echo -e "\e[1;97mSTARTING\e[0m" &&
@@ -41,8 +41,7 @@ item_1:
     iwconfig &&
     echo -e "\e[1;92m+++ INTERFACES RESTORED +++\e[0m"
 
-
-item_2:
+item_3:
   description: Enable monitor mode on wlan and run bettercap
   script: >-
     echo -e "\e[1;97mSTARTING\e[0m" &&
