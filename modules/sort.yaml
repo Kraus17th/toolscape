@@ -1,0 +1,29 @@
+description: >-
+  Remove duplicates from file & sort it
+
+author: Kraus17th
+tags:
+  - osint
+  - uniq
+  - sort
+
+arguments:
+  f:
+    default:
+      -
+    multiple: true
+    replacer: __FILE__
+    description: target file
+
+  o:
+    default:
+      - result.txt
+    replacer: __RESULT__
+    description: result file
+
+shell: bash
+
+item_1:
+  description: Sort and remove duplicates strings from file
+  script: >-
+    sort __FILE__ | uniq > __RESULT__
