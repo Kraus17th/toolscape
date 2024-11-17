@@ -51,3 +51,14 @@ item_3:
     iwconfig &&
     echo -e "\e[1;92m+++ BETTERCAP IS READY +++\e[0m" &&
     sudo bettercap --iface __IFACEMON__
+
+item_4:
+  description: Enable monitor mode on wlan and run bettercap with recon table
+  script: >-
+    echo -e "\e[1;97mSTARTING\e[0m" &&
+    sudo airmon-ng check kill &&
+    sudo airmon-ng start __IFACE__ &&
+    echo -e "\e[1;97mINTERFACES CONFIGURATION \e[0m" &&
+    iwconfig &&
+    echo -e "\e[1;92m+++ BETTERCAP IS READY +++\e[0m" &&
+    sudo bettercap --iface __IFACEMON__ -caplet /home/kraus/work/flow/toolscape/files/scripts/wifi_script.cap

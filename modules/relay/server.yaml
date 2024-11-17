@@ -24,4 +24,4 @@ mode:
 shell: bash
 script: >-
   ip addr show;
-  sudo ntlmrelayx.py -w -ra -tf #targets# -smb2support -of ./ntrlx_out -socks
+  ntlmrelayx.py -w -ra -tf #targets# -smb2support -of ./ntrlx_out -socks
