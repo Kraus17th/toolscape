@@ -13,7 +13,7 @@ file_1:
 script: >-
   olddir=$(realpath .); cd '#file_1#';
   date=$(date +"%Y-%m-%d %H:%M:%S");
-  git add * &&
+  git add . &&
   git commit -m "$date" &&
   git push &&
   echo -e "\e[1;92m+++ [GIT] LIBRARY SUCCESSFULLY PUSHED +++\e[0m" ||
